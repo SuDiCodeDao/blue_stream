@@ -46,20 +46,30 @@ class HomePage extends StatelessWidget {
                 },
               ),
             ),
-            Expanded(
-                child: Obx(() => ListView.builder(
-                      itemCount: bluetoothController.devicesList.length,
-                      itemBuilder: (context, index) {
-                        var device = bluetoothController.devicesList[index];
-                        return ListTile(
-                          title: Text(device.name!),
-                          subtitle: Text(device.address),
-                          onTap: () {
-                            bluetoothController.connectDevice(device);
-                          },
-                        );
-                      },
-                    )))
+            Expanded(child: Obx(() {
+              if (bluetoothController.loading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (bluetoothController.foundDevice.value == false) {
+                return const Center(
+                  child: Text('No device found'),
+                );
+              }
+
+              return ListView.builder(
+                itemCount: bluetoothController.devicesList.length,
+                itemBuilder: (context, index) {
+                  var device = bluetoothController.devicesList[index];
+                  return ListTile(
+                    title: Text(device.name!),
+                    subtitle: Text(device.address),
+                    onTap: () {
+                      bluetoothController.connectDevice(device);
+                    },
+                  );
+                },
+              );
+            }))
           ],
         ),
       ),
